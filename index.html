@@ -3,78 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cari Kost Sekitar Kampus</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f7f7f7;
-    }
-    header {
-      background: #4CAF50;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    .search-form, .review-form {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    .kost-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .kost-card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    .kost-card h3 {
-      margin-top: 0;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 8px;
-      margin-bottom: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      background: #4CAF50;
-      color: white;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .review {
-      background: #f1f1f1;
-      padding: 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-    }
-  </style>
+  <title>Aplikasi Pencarian Tempat Kost di Sekitar Kampus dengan Fitur Review</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
 <header>
-  <h1>Cari Kost Sekitar Kampus</h1>
+  <h1>Aplikasi Pencarian Tempat Kost di Sekitar Kampus dengan Fitur Review</h1>
 </header>
 
 <section class="search-form">
   <h2>Pencarian Kost</h2>
-  <form>
+  <form id="searchForm">
     <label for="lokasi">Lokasi</label>
-    <input type="text" id="lokasi" placeholder="Contoh: Jalan Soekarno Hatta">
+    <input type="text" id="lokasi" placeholder="Contoh: Jalan Soekarno Hatta" />
 
     <label for="harga">Harga Maksimum</label>
-    <input type="number" id="harga" placeholder="Contoh: 1000000">
+    <input type="number" id="harga" placeholder="Contoh: 1000000" />
 
     <label for="fasilitas">Fasilitas</label>
     <select id="fasilitas">
@@ -88,47 +33,77 @@
   </form>
 </section>
 
-<section class="kost-list">
-  <div class="kost-card">
-    <h3>Kost Mawar</h3>
-    <p>Lokasi: Jl. Menco XI</p>
-    <p>Harga: Rp700.000/bulan</p>
-    <p>Fasilitas: Wi-Fi, AC, Kamar Mandi Dalam</p>
-    
-    <div class="review">
-      <strong>Ulasan:</strong>
-      <p>"Tempatnya nyaman dan dekat kampus!" - Rina</p>
-    </div>
-  </div>
-
-  <div class="kost-card">
-    <h3>Kost Melati</h3>
-    <p>Lokasi: Jl. Kenanga No.45</p>
-    <p>Harga: Rp950.000/bulan</p>
-    <p>Fasilitas: Wi-Fi, Kamar Mandi Dalam, , </p>
-    
-    <div class="review">
-      <strong>Ulasan:</strong>
-      <p>"Pemilik kost ramah dan fasilitas lengkap." - Budi</p>
-    </div>
-  </div>
+<section class="kost-list" id="kostList">
+  <!-- Hasil pencarian akan ditampilkan di sini -->
 </section>
 
-<section class="review-form">
-  <h2>Beri Ulasan Kost</h2>
-  <form>
-    <label for="namakost">Nama Kost</label>
-    <input type="text" id="namakost" placeholder="Contoh: Kost Mawar">
+<script>
+  const dataKost = [
+    {
+      nama: "Kost Mawar",
+      lokasi: "Jalan Anggrek No.12",
+      harga: 800000,
+      fasilitas: ["wifi", "ac", "kamar mandi dalam"],
+      review: "Tempatnya nyaman dan dekat kampus!"
+    },
+    {
+      nama: "Kost Melati",
+      lokasi: "Jalan Kenanga No.45",
+      harga: 950000,
+      fasilitas: ["wifi", "kamar mandi dalam"],
+      review: "Pemilik kost ramah dan fasilitas lengkap."
+    },
+    {
+      nama: "Kost Dahlia",
+      lokasi: "Jalan Soekarno Hatta No.88",
+      harga: 700000,
+      fasilitas: ["ac", "kamar mandi dalam"],
+      review: "Murah tapi bersih dan terawat."
+    }
+  ];
 
-    <label for="nama">Nama Anda</label>
-    <input type="text" id="nama" placeholder="Contoh: Rina">
+  const form = document.getElementById("searchForm");
+  const kostList = document.getElementById("kostList");
 
-    <label for="ulasan">Ulasan</label>
-    <textarea id="ulasan" rows="4" placeholder="Tulis ulasan Anda di sini..."></textarea>
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    <button type="submit">Kirim Ulasan</button>
-  </form>
-</section>
+    const lokasiInput = document.getElementById("lokasi").value.toLowerCase();
+    const hargaInput = parseInt(document.getElementById("harga").value);
+    const fasilitasInput = document.getElementById("fasilitas").value;
+
+    const hasil = dataKost.filter(kost => {
+      const cocokLokasi = lokasiInput === "" || kost.lokasi.toLowerCase().includes(lokasiInput);
+      const cocokHarga = isNaN(hargaInput) || kost.harga <= hargaInput;
+      const cocokFasilitas = fasilitasInput === "" || kost.fasilitas.includes(fasilitasInput);
+      return cocokLokasi && cocokHarga && cocokFasilitas;
+    });
+
+    tampilkanHasil(hasil);
+  });
+
+  function tampilkanHasil(kosts) {
+    kostList.innerHTML = "";
+
+    if (kosts.length === 0) {
+      kostList.innerHTML = "<p>Tidak ada kost yang sesuai dengan kriteria.</p>";
+      return;
+    }
+
+    kosts.forEach(kost => {
+      const div = document.createElement("div");
+      div.className = "kost-card";
+      div.innerHTML = `
+        <h3>${kost.nama}</h3>
+        <p>Lokasi: ${kost.lokasi}</p>
+        <p>Harga: Rp${kost.harga.toLocaleString("id-ID")}/bulan</p>
+        <p>Fasilitas: ${kost.fasilitas.join(", ")}</p>
+        <div class="review"><strong>Ulasan:</strong><p>"${kost.review}"</p></div>
+      `;
+      kostList.appendChild(div);
+    });
+  }
+</script>
 
 </body>
 </html>
